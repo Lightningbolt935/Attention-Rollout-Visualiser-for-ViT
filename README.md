@@ -92,3 +92,10 @@ python run.py
 * `attention_rollout.py`: The core algorithm (math and PyTorch hooks) implemented from scratch.
 * `run.py`: The main execution pipeline, handling model loading, image preprocessing, and Matplotlib visualization.
 * `plots/`: Output directory where the generated analytics and heatmaps are saved.
+
+## References
+- [Original Paper: "Quantifying Attention Flow in Transformers"](https://arxiv.org/abs/2005.00928)
+- [Vision Transformers (ViT) - Original Paper](https://arxiv.org/abs/2010.11929)
+- [PyTorch Hooks Documentation](https://pytorch.org/docs/stable/generated/torch.nn.modules.Module.register_forward_hook.html)
+- [Torchvision ViT Models](https://pytorch.org/vision/stable/models.html#vit)
+- [Attention Is All You Need (Transformer Architecture)](https://arxiv.org/abs/1706.03762)
