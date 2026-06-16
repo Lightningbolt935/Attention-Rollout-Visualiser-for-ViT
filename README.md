@@ -6,7 +6,7 @@ The implementation is based on the ACL 2020 paper: ["Quantifying Attention Flow 
 
 ---
 
-## 🎯 The Problem: Why "Attention Rollout"?
+## The Problem: Why "Attention Rollout"?
 
 When trying to interpret what a Vision Transformer is "looking at," the naive approach is to simply visualize the self-attention weights of the final layer (specifically, how the `[CLS]` token attends to the input patches). 
 
@@ -18,14 +18,14 @@ The raw attention of the final layer only tells us how the final representation 
 
 ---
 
-## 🔬 Core Features & Visual Analysis
+## Core Features & Visual Analysis
 
 This project doesn't just compute the rollout; it generates a comprehensive suite of visual analytics to understand the ViT's inner workings.
 
 ### 1. The Rollout Overlay (The Final Saliency Map)
 By computing the rollout, we map the final `[CLS]` token's attention directly back to the original $14 \times 14$ image patch grid. This highlights the exact regions of the image that drove the model's final representation.
 
-![Attention Rollout Overlay](plots/01_overlay_dog.png)
+![Attention Rollout Overlay](01_overlay_dog.png)
 *(Left: Original Image | Center: 14x14 Attention Rollout Grid | Right: Heatmap Overlay)*
 
 ### 2. Layer-by-Layer Attention Evolution
@@ -33,19 +33,19 @@ How does the model build its understanding? This visualization tracks the `[CLS]
 * **Early layers** act like edge/texture detectors, with highly diffuse and scattered attention.
 * **Deeper layers** become highly semantic, aggregating information into object-level concepts.
 
-![Layer Evolution](plots/02_layer_evolution_dog.png)
+![Layer Evolution](02_layer_evolution_dog.png)
 
 ### 3. Multi-Head Diversity Analysis
 Transformers use Multi-Head Self-Attention (MHSA). This module breaks down the final layer to show what each of the 12 independent attention heads is focusing on. You can clearly see that different heads specialize in different features (e.g., one head looks at the face, another tracks the outline).
 
-![Head Diversity](plots/03_head_diversity_dog.png)
+![Head Diversity](03_head_diversity_dog.png)
 
 ### 4. Noise Reduction via Attention Thresholding (Discard Ratio)
 To remove background noise from the heatmaps, the algorithm supports a `discard_ratio`. By zeroing out the lowest $N\%$ of attention weights before rolling out, we force the visualization to focus only on the most critical pathways, resulting in sharper, more accurate object segmentation.
 
 ---
 
-## 📐 Mathematical Implementation
+## Mathematical Implementation
 
 The core algorithm is implemented in `attention_rollout.py`. It computes the true attention distribution by recursively multiplying the attention matrices across all layers, crucially accounting for the residual (skip) connections.
 
@@ -62,7 +62,7 @@ The resulting $Rollout$ matrix has dimensions $(N+1) \times (N+1)$ where $N$ is 
 
 ---
 
-## 💻 Technical Details & PyTorch Architecture
+## Technical Details & PyTorch Architecture
 
 Instead of modifying the source code of the `torchvision` ViT model, this project uses **PyTorch Forward Hooks** (`register_forward_hook`). 
 
@@ -70,7 +70,7 @@ A custom wrapper (`ViTAttentionExtractor`) dynamically intercepts the forward pa
 
 ---
 
-## 🚀 Setup & Usage
+## Setup & Usage
 
 ### Prerequisites
 * Python 3.8+
@@ -88,7 +88,7 @@ Execute the main script. It will download sample images (a dog and an elephant),
 python run.py
 ```
 
-## 📁 Repository Structure
+## Repository Structure
 * `attention_rollout.py`: The core algorithm (math and PyTorch hooks) implemented from scratch.
 * `run.py`: The main execution pipeline, handling model loading, image preprocessing, and Matplotlib visualization.
 * `plots/`: Output directory where the generated analytics and heatmaps are saved.
