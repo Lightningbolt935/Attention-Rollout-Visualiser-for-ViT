@@ -35,9 +35,24 @@ HEAT = LinearSegmentedColormap.from_list(
 
 # ── Model with attention hook ───────────────────────────────────────────
 def build_model():
-    model = tvm.vit_b_16(weights=tvm.ViT_B_16_Weights.IMAGENET1K_V1)
-    model.eval()
-    return model
+    import urllib.request
+    opener = urllib.request.build_opener()
+    opener.addheaders = [('User-agent', 'Mozilla/5.0')]
+    urllib.request.install_opener(opener)
+
+    max_retries = 5
+    for attempt in range(max_retries):
+        try:
+            model = tvm.vit_b_16(weights=tvm.ViT_B_16_Weights.IMAGENET1K_V1)
+            model.eval()
+            return model
+        except Exception as e:
+            if attempt < max_retries - 1:
+                print(f"Failed to download model (attempt {attempt + 1}/{max_retries}): {e}")
+                import time
+                time.sleep(2)
+            else:
+                raise e
 
 def extract_attention(model, pixel_values):
     maps = []
@@ -184,7 +199,7 @@ def main():
     }
 
     for name, url in images.items():
-        print(f"\n── {name} ────────────────────────────")
+        print(f"\n-- {name} ----------------------------")
         img    = load_image(url)
         pv     = transform(img).unsqueeze(0)
 
@@ -200,7 +215,7 @@ def main():
 
         all_plots(img, attn_maps, rollout, name)
 
-    print(f"\n✓ All plots saved to {PLOTS}")
+    print(f"\n[DONE] All plots saved to {PLOTS}")
 
 if __name__ == "__main__":
     main()

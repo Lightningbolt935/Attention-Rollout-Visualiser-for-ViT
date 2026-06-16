@@ -25,23 +25,35 @@ This project doesn't just compute the rollout; it generates a comprehensive suit
 ### 1. The Rollout Overlay (The Final Saliency Map)
 By computing the rollout, we map the final `[CLS]` token's attention directly back to the original $14 \times 14$ image patch grid. This highlights the exact regions of the image that drove the model's final representation.
 
-![Attention Rollout Overlay](01_overlay_dog.png)
+![Attention Rollout Overlay](plots/01_overlay_dog.png)
 *(Left: Original Image | Center: 14x14 Attention Rollout Grid | Right: Heatmap Overlay)*
 
 ### 2. Layer-by-Layer Attention Evolution
-How does the model build its understanding? This visualization tracks the `[CLS]` token's attention from Layer 1 to Layer 12. 
+How does the model build its understanding? This visualization tracks the `[CLS]` token's attention from Layer 1 to Layer 12.
 * **Early layers** act like edge/texture detectors, with highly diffuse and scattered attention.
 * **Deeper layers** become highly semantic, aggregating information into object-level concepts.
 
-![Layer Evolution](02_layer_evolution_dog.png)
+![Layer Evolution](plots/02_layer_evolution_dog.png)
 
 ### 3. Multi-Head Diversity Analysis
 Transformers use Multi-Head Self-Attention (MHSA). This module breaks down the final layer to show what each of the 12 independent attention heads is focusing on. You can clearly see that different heads specialize in different features (e.g., one head looks at the face, another tracks the outline).
 
-![Head Diversity](03_head_diversity_dog.png)
+![Head Diversity](plots/03_head_diversity_dog.png)
 
-### 4. Noise Reduction via Attention Thresholding (Discard Ratio)
+### 4. Rollout vs. Raw Attention
+A direct comparison between naive last-layer raw attention and the full Attention Rollout. This illustrates why simply reading the final layer's attention is insufficient — the rolled-out map is significantly more accurate and less noisy.
+
+![Rollout vs Raw](plots/04_rollout_vs_raw_dog.png)
+
+### 5. Noise Reduction via Attention Thresholding (Discard Ratio)
 To remove background noise from the heatmaps, the algorithm supports a `discard_ratio`. By zeroing out the lowest $N\%$ of attention weights before rolling out, we force the visualization to focus only on the most critical pathways, resulting in sharper, more accurate object segmentation.
+
+![Discard Ratio](plots/05_discard_dog.png)
+
+### 6. Top Attended Patches
+A visualization highlighting the individual image patches that received the highest attention scores, directly showing which spatial regions the model found most informative for its representation.
+
+![Top Patches](plots/06_top_patches_dog.png)
 
 ---
 
